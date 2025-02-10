@@ -9,6 +9,14 @@ export default {
   ],
   theme: {
     extend: {
+      opacity: {
+        3: "0.03",
+        7: "0.07",
+      },
+      zIndex: {
+        1: "1",
+        2: "2",
+      },
       colors: {
         pago: {
           yellow: {

@@ -11,8 +11,8 @@ export default function MainNavigation() {
   return (
     <Tabs.Root asChild>
       <Fragment>
-        <Tabs.List>
-          <MainContainer className="border-t h-20 flex-grow-0 flex justify-around">
+        <Tabs.List asChild>
+          <MainContainer className="border-t sticky z-1 bottom-0 shrink-0 bg-white flex-grow-0 h-20 flex justify-around">
             <NavItem
               icon={
                 <span className="size-10 opacity-50 group-data-[state=active]:opacity-100 grid place-items-center">

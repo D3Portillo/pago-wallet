@@ -20,6 +20,61 @@ export default function Home() {
           <FaArrowUp className="scale-125" />
         </Button>
       </div>
+
+      <nav className="flex mt-10 items-center justify-between gap-4">
+        <h3 className="text-xl font-bold">Transactions</h3>
+        <button className="underline text-lg font-medium">See all</button>
+      </nav>
+
+      <section className="mt-4 flex flex-col gap-2">
+        <button className="flex py-2 text-left items-center gap-4">
+          <div className="rounded-full bg-black/3 size-14" />
+          <div className="flex-grow">
+            <h4 className="font-bold text-xl">Sent</h4>
+            <p className="opacity-70">Cancelled · Apr 12</p>
+          </div>
+          <div className="text-right">
+            <h4 className="font-bold text-xl">20USD</h4>
+            <p className="opacity-70">0.0032 ETH</p>
+          </div>
+        </button>
+
+        <button className="flex py-2 text-left items-center gap-4">
+          <div className="rounded-full bg-black/3 size-14" />
+          <div className="flex-grow">
+            <h4 className="font-bold text-xl">Sent</h4>
+            <p className="opacity-70">Cancelled · Apr 12</p>
+          </div>
+          <div className="text-right">
+            <h4 className="font-bold text-xl">20USD</h4>
+            <p className="opacity-70">0.0032 ETH</p>
+          </div>
+        </button>
+
+        <button className="flex py-2 text-left items-center gap-4">
+          <div className="rounded-full bg-black/3 size-14" />
+          <div className="flex-grow">
+            <h4 className="font-bold text-xl">Sent</h4>
+            <p className="opacity-70">Cancelled · Apr 12</p>
+          </div>
+          <div className="text-right">
+            <h4 className="font-bold text-xl">20USD</h4>
+            <p className="opacity-70">0.0032 ETH</p>
+          </div>
+        </button>
+
+        <button className="flex py-2 text-left items-center gap-4">
+          <div className="rounded-full bg-black/3 size-14" />
+          <div className="flex-grow">
+            <h4 className="font-bold text-xl">Sent</h4>
+            <p className="opacity-70">Cancelled · Apr 12</p>
+          </div>
+          <div className="text-right">
+            <h4 className="font-bold text-xl">20USD</h4>
+            <p className="opacity-70">0.0032 ETH</p>
+          </div>
+        </button>
+      </section>
     </MainContainer>
   )
 }
