@@ -1,10 +1,14 @@
 "use client"
 
-import { Button } from "@/components/ui/button"
-import { usePrivy } from "@privy-io/react-auth"
 import { Fragment, useEffect, useState } from "react"
+import { usePrivy } from "@privy-io/react-auth"
+
+import { Button } from "@/components/ui/button"
 import { FaArrowRight } from "react-icons/fa"
 import { ImSpinner4 } from "react-icons/im"
+
+import asset_logo from "@/assets/logo.svg"
+import Image from "next/image"
 
 export default function AuthSentinel() {
   const [showWelcome, setShowWelcome] = useState(false)
@@ -28,12 +32,17 @@ export default function AuthSentinel() {
       <div className="fixed inset-0 bg-white flex flex-col items-center z-2 justify-center">
         {showWelcome ? (
           <Fragment>
-            <h1 className="text-3xl font-bold">Welcome to PagoWallet</h1>
+            <figure className="max-w-[10rem]">
+              <Image src={asset_logo} alt="" />
+            </figure>
+
+            <h1 className="text-2xl mt-4 font-medium">Welcome back 👋</h1>
+
             <Button
               onClick={() => login()}
-              className="text-xl mt-8 px-7 flex items-center gap-4 h-14 rounded-xl font-bold"
+              className="text-xl mt-12 px-7 flex items-center gap-4 h-14 rounded-xl font-bold"
             >
-              <span>Let's get started</span>
+              <span>View my account</span>
               <FaArrowRight className="scale-125" />
             </Button>
           </Fragment>
