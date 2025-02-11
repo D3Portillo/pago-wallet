@@ -59,7 +59,7 @@ const DrawerContent = React.forwardRef<
             <AiOutlineClose />
           </button>
         </DrawerClose>
-        <main className="px-4 sm:px-7 w-full pt-5 pb-4">{children}</main>
+        <section className="px-4 sm:px-7 w-full py-4">{children}</section>
       </div>
     </DrawerPrimitive.Content>
   </DrawerPortal>

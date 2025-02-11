@@ -12,13 +12,13 @@ import { FaArrowUp } from "react-icons/fa"
 import DialogSend from "@/components/DialogSend"
 import MainContainer from "./MainContainer"
 
-export default function MainNavigation() {
+export default function BottomNavigation() {
   const pathname = usePathname()
   const activePath = pathname.startsWith("/contacts") ? "contacts" : "home"
 
   return (
     <Tabs.Root
-      className="sticky z-1 bottom-0 shrink-0 w-full"
+      className="sticky z-1 mt-8 bottom-0 shrink-0 w-full"
       value={activePath}
     >
       <Tabs.List asChild>

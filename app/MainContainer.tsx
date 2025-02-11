@@ -11,7 +11,10 @@ export default function MainContainer({
 }>) {
   return (
     <Container
-      className={cn("w-full flex-grow px-3 max-w-lg mx-auto", className)}
+      className={cn(
+        "w-full flex-grow md:mb-4 px-3 max-w-lg mx-auto",
+        className
+      )}
     >
       {children}
     </Container>

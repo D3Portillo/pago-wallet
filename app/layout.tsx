@@ -2,11 +2,12 @@ import "./globals.css"
 
 import type { Metadata } from "next"
 import { Instrument_Sans } from "next/font/google"
+import { Toaster } from "sonner"
 
-import MainNavigation from "./MainNavigation"
 import Provider from "./web3/Provider"
 import AuthSentinel from "./AuthSentinel"
 import TopNavigation from "./TopNavigation"
+import BottomNavigation from "./BottomNavigation"
 
 const mainFont = Instrument_Sans({
   display: "block",
@@ -28,12 +29,13 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${mainFont.className} antialiased`}>
+        <Toaster position="top-center" />
         <Provider>
           <AuthSentinel />
           <div className="min-h-screen flex flex-col">
             <TopNavigation />
             {children}
-            <MainNavigation />
+            <BottomNavigation />
           </div>
         </Provider>
       </body>
