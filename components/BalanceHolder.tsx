@@ -34,7 +34,7 @@ export default function BalanceHolder() {
       >
         <div className="font-bold text-4xl sm:text-5xl">
           <span className="font-mono">$</span>
-          {toPrecision(balance, 2)}
+          {toPrecision(balance.formatted, 2)}
         </div>
         <div className="inline-flex mt-0.5 items-center gap-1">
           <span className="text-lg font-medium opacity-70">Add funds</span>

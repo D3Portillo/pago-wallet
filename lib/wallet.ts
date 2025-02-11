@@ -18,6 +18,9 @@ export const useWalletUSDCBalance = (address?: Address) => {
 
   return {
     ...query,
-    data: data ? Number(formatUnits(data, 6)) : 0,
+    data: {
+      formatted: data ? Number(formatUnits(data, 6)) : 0,
+      raw: data || BigInt(0),
+    },
   }
 }

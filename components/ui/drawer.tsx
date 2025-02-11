@@ -55,8 +55,8 @@ const DrawerContent = React.forwardRef<
         </DrawerPrimitive.Title>
 
         <DrawerClose asChild>
-          <button className="absolute opacity-60 top-2 p-1 right-2 text-xl scale-95">
-            <AiOutlineClose />
+          <button className="absolute opacity-60 top-1 p-1.5 right-1.5 text-xl">
+            <AiOutlineClose className="scale-90" />
           </button>
         </DrawerClose>
         <section className="px-4 sm:px-7 w-full py-4">{children}</section>
