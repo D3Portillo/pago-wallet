@@ -22,7 +22,9 @@ export default function TopNavigation() {
         }
       />
       <DialogDefault
-        trigger={<button className="bg-black rounded-full size-9" />}
+        trigger={
+          <button className="bg-black outline-none rounded-full size-9" />
+        }
       >
         <h1 className="text-2xl font-bold">Hello</h1>
         <p className="opacity-70">You are logged in as {address}</p>

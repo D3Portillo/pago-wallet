@@ -22,6 +22,12 @@ export default {
           yellow: {
             DEFAULT: "#E8FF5D",
           },
+          green: {
+            DEFAULT: "#00bf5d",
+          },
+          red: {
+            DEFAULT: "#ff4444",
+          },
         },
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",

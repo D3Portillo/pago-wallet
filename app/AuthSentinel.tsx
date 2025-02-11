@@ -40,7 +40,7 @@ export default function AuthSentinel() {
 
             <Button
               onClick={() => login()}
-              className="text-xl mt-12 px-7 flex items-center gap-4 h-14 rounded-xl font-bold"
+              className="text-xl mt-12 px-7 flex items-center gap-4"
             >
               <span>View my account</span>
               <FaArrowRight className="scale-125" />

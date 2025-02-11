@@ -18,8 +18,9 @@ const queryClient = new QueryClient()
 
 const privyConfig: PrivyClientConfig = {
   appearance: {
-    accentColor: "#000000",
+    accentColor: "#11c367",
     theme: "#FFFFFF",
+    landingHeader: "Let's get started",
     showWalletLoginFirst: false,
     logo: "https://auth.privy.io/logos/privy-logo.png",
     walletChainType: "ethereum-only",
@@ -33,11 +34,6 @@ const privyConfig: PrivyClientConfig = {
     ],
   },
   loginMethods: ["wallet", "twitter", "email"],
-  fundingMethodConfig: {
-    moonpay: {
-      useSandbox: true,
-    },
-  },
   embeddedWallets: {
     requireUserPasswordOnCreate: false,
     showWalletUIs: true,
