@@ -6,6 +6,7 @@ import { WagmiProvider, createConfig } from "@privy-io/wagmi"
 import { base } from "wagmi/chains"
 import { http } from "wagmi"
 import { type PrivyClientConfig, PrivyProvider } from "@privy-io/react-auth"
+import { SmartWalletsProvider } from "@privy-io/react-auth/smart-wallets"
 
 export const config = createConfig({
   chains: [base],
@@ -33,6 +34,7 @@ const privyConfig: PrivyClientConfig = {
       "wallet_connect",
     ],
   },
+  defaultChain: base,
   loginMethods: ["wallet", "twitter", "email"],
   embeddedWallets: {
     requireUserPasswordOnCreate: false,
@@ -51,10 +53,12 @@ const privyConfig: PrivyClientConfig = {
 
 export default function Provider({ children }: PropsWithChildren) {
   return (
-    <PrivyProvider config={privyConfig} appId="cm6z8xwev00oziwicjge98w9s">
-      <QueryClientProvider client={queryClient}>
-        <WagmiProvider config={config}>{children}</WagmiProvider>
-      </QueryClientProvider>
-    </PrivyProvider>
+    <QueryClientProvider client={queryClient}>
+      <PrivyProvider config={privyConfig} appId="cm6z8xwev00oziwicjge98w9s">
+        <SmartWalletsProvider>
+          <WagmiProvider config={config}>{children}</WagmiProvider>
+        </SmartWalletsProvider>
+      </PrivyProvider>
+    </QueryClientProvider>
   )
 }

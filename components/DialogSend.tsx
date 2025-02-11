@@ -1,9 +1,6 @@
 "use client"
 
-import type {
-  SendTransactionModalUIOptions,
-  UnsignedTransactionRequest,
-} from "@privy-io/react-auth"
+import type { SendTransactionModalUIOptions } from "@privy-io/react-auth"
 
 import { useEffect, useState } from "react"
 import { toast } from "sonner"
@@ -20,9 +17,11 @@ import { USDC_BASE, useWalletUSDCBalance } from "@/lib/wallet"
 import { useFormattedInputHandler } from "@/lib/input"
 import { beautifyAddress } from "@/lib/utils"
 import { toPrecision } from "@/lib/numbers"
+import { useSmartWallets } from "@privy-io/react-auth/smart-wallets"
 
 export default function DialogSend({ trigger }: { trigger: React.ReactNode }) {
   const { user } = usePrivy()
+  const { client } = useSmartWallets()
   const [recipient, setRecipient] = useState("")
   const { address } = useAccount()
   const [isOpen, setIsOpen] = useState(false)
@@ -43,7 +42,8 @@ export default function DialogSend({ trigger }: { trigger: React.ReactNode }) {
   }, [isOpen])
 
   const { writeContractAsync } = useWriteContract()
-  const { sendTransaction } = usePrivy()
+
+  console.debug({ user })
 
   async function handleSend() {
     if (!isAddress(recipient)) return toast.error("Invalid address")
@@ -58,16 +58,6 @@ export default function DialogSend({ trigger }: { trigger: React.ReactNode }) {
     }
 
     if (isEmbedded) {
-      const unsignedTx: UnsignedTransactionRequest = {
-        to: USDC_BASE,
-        data: encodeFunctionData({
-          abi: erc20Abi,
-          functionName: "transfer",
-          args: [recipient, balanceInput.formattedValue],
-        }),
-        chainId: base.id,
-      }
-
       const uiOptions: SendTransactionModalUIOptions = {
         buttonText: "Confirm",
         showWalletUIs: true,
@@ -80,11 +70,21 @@ export default function DialogSend({ trigger }: { trigger: React.ReactNode }) {
         },
       }
 
-      const { hash } = await sendTransaction(unsignedTx, {
-        uiOptions,
-      })
+      const txHash = await client?.sendTransaction(
+        {
+          to: USDC_BASE,
+          data: encodeFunctionData({
+            abi: erc20Abi,
+            functionName: "transfer",
+            args: [recipient, balanceInput.formattedValue],
+          }),
+        },
+        {
+          uiOptions,
+        }
+      )
 
-      window.open(`https://basescan.org/tx/${hash}`, "_blank")
+      window.open(`https://basescan.org/tx/${txHash}`, "_blank")
       return
     }
 

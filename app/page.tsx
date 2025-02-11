@@ -6,6 +6,7 @@ import DialogSend from "@/components/DialogSend"
 import BalanceHolder from "@/components/BalanceHolder"
 import MainContainer from "./MainContainer"
 import ActionReceive from "@/components/ActionReceive"
+import Transactions from "@/components/Transactions"
 
 export default function PageHome() {
   return (
@@ -29,6 +30,7 @@ export default function PageHome() {
         <button className="underline text-lg font-medium">See all</button>
       </nav>
 
+      <Transactions />
       <section className="mt-4 flex flex-col gap-2">
         <button className="flex py-2 text-left items-center gap-4">
           <div className="rounded-full bg-pago-green/7 text-pago-green size-14 grid place-items-center">
