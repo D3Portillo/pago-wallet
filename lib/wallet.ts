@@ -1,6 +1,11 @@
 "use client"
 
-import { Alchemy, Network } from "alchemy-sdk"
+import {
+  Alchemy,
+  AssetTransfersCategory,
+  Network,
+  SortingOrder,
+} from "alchemy-sdk"
 import { Address, erc20Abi, formatUnits } from "viem"
 import { useReadContract } from "wagmi"
 import useSWR from "swr"
@@ -37,13 +42,23 @@ export const useWalletTransactions = (address?: Address) => {
   return useSWR(address ? `sent-${address}` : null, async () => {
     if (!address) return []
     const res = await alchemy.core.getAssetTransfers({
-      fromBlock: "0x0",
       fromAddress: address,
       excludeZeroValue: true,
-      // @ts-ignore
-      category: "erc20",
+      withMetadata: true,
+      order: SortingOrder.DESCENDING,
+      category: [AssetTransfersCategory.ERC20],
     })
 
     return res.transfers
+      .filter((tx) => tx.asset === "USDC")
+      .map(({ from, to, hash, metadata, value }) => {
+        return {
+          from,
+          value: value || 0,
+          date: new Date(metadata.blockTimestamp),
+          to,
+          hash,
+        }
+      })
   })
 }

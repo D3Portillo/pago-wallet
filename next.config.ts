@@ -5,6 +5,7 @@ const nextConfig: NextConfig = {
     config.resolve.fallback = {
       ...config.resolve.fallback,
       permissionless: false,
+      "date-fns": false,
       // Excluded due SSR issues in local :/
     }
     return config

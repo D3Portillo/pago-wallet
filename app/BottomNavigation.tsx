@@ -18,7 +18,7 @@ export default function BottomNavigation() {
 
   return (
     <Tabs.Root
-      className="sticky z-1 mt-8 bottom-0 shrink-0 w-full"
+      className="sticky bg-white z-1 mt-8 bottom-0 shrink-0 w-full"
       value={activePath}
     >
       <Tabs.List asChild>
