@@ -6,10 +6,13 @@ import { useAccount } from "wagmi"
 import { formatDistanceToNow } from "date-fns"
 
 import { FaArrowDown, FaArrowUp } from "react-icons/fa"
-import { IoMdAdd } from "react-icons/io"
+import { IoMdAdd, IoMdArrowRoundBack } from "react-icons/io"
 import { toPrecision } from "@/lib/numbers"
+import { cn } from "@/lib/utils"
+import Link from "next/link"
+import { IoChevronBackSharp } from "react-icons/io5"
 
-export default function Transactions() {
+export default function Transactions({ isFullPage }: { isFullPage?: boolean }) {
   const { address } = useAccount()
   const { data: txs = [] } = useWalletTransactions(address)
 
@@ -17,13 +20,31 @@ export default function Transactions() {
 
   return (
     <Fragment>
-      <nav className="flex mt-10 items-center justify-between gap-4">
-        <h3 className="text-xl font-semibold">Transactions</h3>
-        <button className="underline text-lg font-medium">See all</button>
+      <nav
+        className={cn(
+          isFullPage ? "pb-6 justify-start" : "mt-10 justify-between",
+          "flex items-center gap-3"
+        )}
+      >
+        {isFullPage ? (
+          <Link href="/" className="text-2xl py-1 pl-2 opacity-60">
+            <IoChevronBackSharp />
+          </Link>
+        ) : null}
+
+        <h3 className="text-xl font-semibold">
+          {isFullPage ? "All transactions" : "Transactions"}
+        </h3>
+
+        {isFullPage ? null : (
+          <Link href="/history" className="underline text-lg font-medium">
+            See all
+          </Link>
+        )}
       </nav>
 
       <section className="mt-4 flex flex-col gap-2">
-        {txs.map((tx) => {
+        {txs.slice(0, isFullPage ? txs.length : 7).map((tx) => {
           const isReceived = tx.to === address?.toLowerCase()
           const isSent = tx.from === address?.toLowerCase()
 

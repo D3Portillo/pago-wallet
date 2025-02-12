@@ -42,7 +42,7 @@ function DropdownSettings({ trigger }: { trigger: React.ReactNode }) {
           </DropdownMenuItem>
 
           <DropdownMenuItem className="px-3 py-2" asChild>
-            <Link href="/">
+            <Link href="/history">
               <div className="size-4 grid place-items-center mr-3">
                 <MdOutlineHistoryEdu className="scale-[1.35]" />
               </div>
