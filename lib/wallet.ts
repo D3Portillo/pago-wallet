@@ -10,7 +10,7 @@ const alchemy = new Alchemy({
   network: Network.BASE_MAINNET,
 })
 
-export const USDC_BASE = "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913"
+export const USDC_BASE = "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913" as const
 export const useWalletUSDCBalance = (address?: Address) => {
   const { data, ...query } = useReadContract({
     address: USDC_BASE,
@@ -18,6 +18,7 @@ export const useWalletUSDCBalance = (address?: Address) => {
     functionName: "balanceOf",
     query: {
       enabled: !!address,
+      refetchInterval: 5_000,
     },
     args: [address!],
     scopeKey: `usdc-balance-${address || "0x0"}`,

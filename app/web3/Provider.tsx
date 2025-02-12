@@ -23,7 +23,7 @@ const privyConfig: PrivyClientConfig = {
     theme: "#FFFFFF",
     landingHeader: "Let's get started",
     showWalletLoginFirst: false,
-    logo: "https://auth.privy.io/logos/privy-logo.png",
+    logo: "/pbanner.png",
     walletChainType: "ethereum-only",
     walletList: [
       "detected_wallets",
@@ -40,7 +40,7 @@ const privyConfig: PrivyClientConfig = {
     requireUserPasswordOnCreate: false,
     showWalletUIs: true,
     ethereum: {
-      createOnLogin: "users-without-wallets",
+      createOnLogin: "all-users",
     },
     solana: {
       createOnLogin: "off",

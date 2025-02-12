@@ -1,36 +1,40 @@
 "use client"
 
-import type { SendTransactionModalUIOptions } from "@privy-io/react-auth"
+import { type SendTransactionModalUIOptions } from "@privy-io/react-auth"
 
 import { useEffect, useState } from "react"
 import { toast } from "sonner"
-import { usePrivy } from "@privy-io/react-auth"
-import { encodeFunctionData, erc20Abi, isAddress } from "viem"
-import { base } from "viem/chains"
-import { useAccount, useWriteContract } from "wagmi"
+import { encodeFunctionData, erc20Abi, isAddress, parseAbi } from "viem"
+import { useAccount } from "wagmi"
+import { useSmartWallets } from "@privy-io/react-auth/smart-wallets"
+
+import DialogDefault from "@/components/DialogDefault"
+import { Button } from "@/components/ui/button"
 
 import { FaArrowRightLong } from "react-icons/fa6"
-import { Button } from "./ui/button"
-import DialogDefault from "./DialogDefault"
 
 import { USDC_BASE, useWalletUSDCBalance } from "@/lib/wallet"
 import { useFormattedInputHandler } from "@/lib/input"
 import { beautifyAddress } from "@/lib/utils"
 import { toPrecision } from "@/lib/numbers"
-import { useSmartWallets } from "@privy-io/react-auth/smart-wallets"
+import { toSplittedSignature } from "@/lib/signature"
 
+import useHybridPermitSign from "./useHybridPermitSign"
+
+const ABI_PERMIT = parseAbi([
+  "function permit(address owner, address spender, uint256 value, uint256 deadline, uint8 v, bytes32 r, bytes32 s) public",
+])
 export default function DialogSend({ trigger }: { trigger: React.ReactNode }) {
-  const { user } = usePrivy()
-  const { client } = useSmartWallets()
-  const [recipient, setRecipient] = useState("")
-  const { address } = useAccount()
-  const [isOpen, setIsOpen] = useState(false)
-  const [isBalanceStep, setIsBalanceStep] = useState(false)
-  const { data: balance } = useWalletUSDCBalance(address)
+  const { address: connectedWallet } = useAccount()
+  const { data: balance } = useWalletUSDCBalance(connectedWallet)
   const balanceInput = useFormattedInputHandler({ decimals: 6 })
 
-  const isEmbedded = user?.wallet?.connectorType === "embedded"
-  console.debug({ isEmbedded })
+  const { client: smartWalletClient } = useSmartWallets()
+  const { signPermitUSDC } = useHybridPermitSign()
+
+  const [recipient, setRecipient] = useState("")
+  const [isOpen, setIsOpen] = useState(false)
+  const [isBalanceStep, setIsBalanceStep] = useState(false)
 
   useEffect(() => {
     return () => {
@@ -41,11 +45,10 @@ export default function DialogSend({ trigger }: { trigger: React.ReactNode }) {
     }
   }, [isOpen])
 
-  const { writeContractAsync } = useWriteContract()
-
-  console.debug({ user })
-
   async function handleSend() {
+    const SMART_WALLET_ADDRESS = smartWalletClient?.account.address!
+    const OWNER = connectedWallet!
+
     if (!isAddress(recipient)) return toast.error("Invalid address")
     if (!isBalanceStep) return setIsBalanceStep(true) // Continue to balance step
 
@@ -57,49 +60,63 @@ export default function DialogSend({ trigger }: { trigger: React.ReactNode }) {
       return toast.error("Insufficient balance")
     }
 
-    if (isEmbedded) {
-      const uiOptions: SendTransactionModalUIOptions = {
-        buttonText: "Confirm",
-        showWalletUIs: true,
-        description: `You are about to send ${
-          balanceInput.value
-        } USDC to ${beautifyAddress(recipient, 7)}`,
-        transactionInfo: {
-          action: "Send",
-          title: "Sending USDC",
-        },
-      }
+    const permit = await signPermitUSDC({
+      owner: OWNER,
+      spender: SMART_WALLET_ADDRESS,
+      value: balanceInput.formattedValue,
+    })
 
-      const txHash = await client?.sendTransaction(
-        {
-          to: USDC_BASE,
-          data: encodeFunctionData({
-            abi: erc20Abi,
-            functionName: "transfer",
-            args: [recipient, balanceInput.formattedValue],
-          }),
-        },
-        {
-          uiOptions,
-        }
-      )
+    if (!permit) return toast.error("Oops! Something went wrong")
+    // Early return if no signature
 
-      window.open(`https://basescan.org/tx/${txHash}`, "_blank")
-      return
+    const uiOptions: SendTransactionModalUIOptions = {
+      buttonText: "Confirm",
+      showWalletUIs: true,
+      description: `You are about to send ${
+        balanceInput.value
+      } USDC to ${beautifyAddress(recipient, 7)}`,
+      transactionInfo: {
+        action: "Send",
+        title: "Sending USDC",
+      },
     }
+    const { r, s, v } = toSplittedSignature(permit.signature)
 
-    // Request change chain (confirm BASE)
+    const txHash = await smartWalletClient?.sendTransaction(
+      {
+        account: smartWalletClient?.account,
+        calls: [
+          {
+            to: USDC_BASE,
+            data: encodeFunctionData({
+              abi: ABI_PERMIT,
+              args: [
+                OWNER,
+                SMART_WALLET_ADDRESS,
+                balanceInput.formattedValue,
+                BigInt(permit.expireTime),
+                v,
+                r,
+                s,
+              ],
+            }),
+          },
+          {
+            to: USDC_BASE,
+            data: encodeFunctionData({
+              abi: erc20Abi,
+              functionName: "transferFrom",
+              args: [OWNER, recipient, balanceInput.formattedValue],
+            }),
+          },
+        ],
+      },
+      {
+        uiOptions,
+      }
+    )
 
-    try {
-      const txHash = await writeContractAsync({
-        chain: base,
-        address: USDC_BASE,
-        abi: erc20Abi,
-        functionName: "transfer",
-        args: [recipient, balanceInput.formattedValue],
-      })
-      window.open(`https://basescan.org/tx/${txHash}`, "_blank")
-    } catch (_) {}
+    window.open(`https://basescan.org/tx/${txHash}`, "_blank")
   }
 
   function handleMax() {
@@ -144,7 +161,7 @@ export default function DialogSend({ trigger }: { trigger: React.ReactNode }) {
             <p>
               Available:{" "}
               <span className="font-medium">
-                {toPrecision(balance.formatted)} USDC
+                {toPrecision(balance.formatted, 4)} USDC
               </span>
             </p>
           </nav>
