@@ -54,7 +54,10 @@ const privyConfig: PrivyClientConfig = {
 export default function Provider({ children }: PropsWithChildren) {
   return (
     <QueryClientProvider client={queryClient}>
-      <PrivyProvider config={privyConfig} appId="cm6z8xwev00oziwicjge98w9s">
+      <PrivyProvider
+        config={privyConfig}
+        appId={process.env.NEXT_PUBLIC_PRIVY_APP_ID!}
+      >
         <SmartWalletsProvider>
           <WagmiProvider config={config}>{children}</WagmiProvider>
         </SmartWalletsProvider>

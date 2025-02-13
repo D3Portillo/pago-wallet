@@ -11,9 +11,13 @@ import { useReadContract } from "wagmi"
 import useSWR from "swr"
 
 const alchemy = new Alchemy({
-  apiKey: "TydhRO71t-iaLkFdNDoQ_eIcd9TgKv0Q",
+  apiKey: process.env.NEXT_PUBLIC_ALCHEMY_API_KEY,
   network: Network.BASE_MAINNET,
 })
+
+export const useAlchemy = () => {
+  alchemy
+}
 
 export const USDC_BASE = "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913" as const
 export const useWalletUSDCBalance = (address?: Address) => {
@@ -23,7 +27,7 @@ export const useWalletUSDCBalance = (address?: Address) => {
     functionName: "balanceOf",
     query: {
       enabled: !!address,
-      refetchInterval: 5_000,
+      refetchInterval: 3_500,
     },
     args: [address!],
     scopeKey: `usdc-balance-${address || "0x0"}`,

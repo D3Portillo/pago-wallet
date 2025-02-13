@@ -1,36 +1,31 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+![Pago Wallet](./app/opengraph-image.png)
 
-## Getting Started
+**Pago Wallet:** Another-yet simple wallet for sending and receiving USDC payments 😋
 
-First, run the development server:
+> This is a WIP Project to learn more about Account Abstraction, Meta transactions and Gassless interactions on-chain
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## Features
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+- Connect with EOA Wallets, Smart Wallets and Socials
+- You do need to worry about gas, user only signs for transactions off-chain and we relay the transaction using a Alchemy's paymsters
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Want to add
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- Back up for wallets
+- Wallet recover from Drive, iCloud
+- Scan to add user to a walet + it's metadata (custom profile pic, name, etc)
 
-## Learn More
+## The stack
 
-To learn more about Next.js, take a look at the following resources:
+I'm using de facto Web3 Stack: NextJs, TailwindCSS, Typescript and some shadcn components to add UX first visuals to Pago.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Don't forget to look at the `.env.example` file to configure the required environment variables for PagoWallet to function in development 😉.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Good references
 
-## Deploy on Vercel
+1. **How to send sponsored transactions:** See [DialogSend/index.tsx](./components/DialogSend/index.tsx) to get a grasp on the logic behind
+2. **How to make a hybrid USDC permit for EOA wallets + smart accounts and embedded wallets:** See [DialogSend/useHybridPermitSign.ts](./components/DialogSend/useHybridPermitSign.ts) to see the solution I came up with to re-use the sign-in process to allow USDC to be sent/sponsored by a Smart Wallet.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Last words
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+See PagoWallet live at [pago.rocks](https://www.pago.rocks/). Thanks!

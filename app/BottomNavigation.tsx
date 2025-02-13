@@ -1,6 +1,6 @@
 "use client"
 
-import { Fragment, type PropsWithChildren } from "react"
+import { type PropsWithChildren } from "react"
 import { usePathname } from "next/navigation"
 import Link from "next/link"
 import * as Tabs from "@radix-ui/react-tabs"

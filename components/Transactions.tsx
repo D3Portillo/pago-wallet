@@ -1,16 +1,17 @@
 "use client"
 
-import { useWalletTransactions } from "@/lib/wallet"
+import Link from "next/link"
 import { Fragment } from "react"
 import { useAccount } from "wagmi"
 import { formatDistanceToNow } from "date-fns"
 
 import { FaArrowDown, FaArrowUp } from "react-icons/fa"
-import { IoMdAdd, IoMdArrowRoundBack } from "react-icons/io"
-import { toPrecision } from "@/lib/numbers"
-import { cn } from "@/lib/utils"
-import Link from "next/link"
+import { IoMdAdd } from "react-icons/io"
 import { IoChevronBackSharp } from "react-icons/io5"
+
+import { toPrecision } from "@/lib/numbers"
+import { useWalletTransactions } from "@/lib/wallet"
+import { cn } from "@/lib/utils"
 
 export default function Transactions({ isFullPage }: { isFullPage?: boolean }) {
   const { address } = useAccount()
@@ -81,17 +82,23 @@ function Transaction({
   icon,
   slug,
   status,
+  hash,
   date,
   value,
 }: {
   icon: React.ReactNode
   slug: string
+  hash: string
   status: "completed" | "cancelled"
   date: Date
   value: number
 }) {
   return (
-    <button className="flex py-2 text-left items-center gap-4">
+    <Link
+      target="_blank"
+      href={`https://basescan.org/tx/${hash}`}
+      className="flex py-2 text-left items-center gap-4"
+    >
       {icon}
       <div className="flex-grow">
         <h4 className="font-bold text-xl">{slug}</h4>
@@ -108,6 +115,6 @@ function Transaction({
           {toPrecision(value, 4)}
         </h4>
       </div>
-    </button>
+    </Link>
   )
 }
