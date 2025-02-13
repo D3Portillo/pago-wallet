@@ -2,6 +2,7 @@
 
 **Pago Wallet:** Another-yet simple wallet for sending and receiving USDC payments 😋
 
+> [!WARNING]
 > This is a WIP Project to learn more about Account Abstraction, Meta transactions and Gassless interactions on-chain
 
 ## Features

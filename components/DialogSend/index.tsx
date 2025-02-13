@@ -4,7 +4,13 @@ import { type SendTransactionModalUIOptions } from "@privy-io/react-auth"
 
 import { useEffect, useState } from "react"
 import { toast } from "sonner"
-import { encodeFunctionData, erc20Abi, isAddress, parseAbi } from "viem"
+import {
+  type Address,
+  encodeFunctionData,
+  erc20Abi,
+  isAddress,
+  parseAbi,
+} from "viem"
 import { useAccount } from "wagmi"
 import { useSmartWallets } from "@privy-io/react-auth/smart-wallets"
 
@@ -13,18 +19,19 @@ import { Button } from "@/components/ui/button"
 
 import { FaArrowRightLong } from "react-icons/fa6"
 
-import { USDC_BASE, useWalletUSDCBalance } from "@/lib/wallet"
+import { USDC_BASE, useAlchemy, useWalletUSDCBalance } from "@/lib/wallet"
 import { useFormattedInputHandler } from "@/lib/input"
+import useHybridPermitSign from "./useHybridPermitSign"
+
 import { beautifyAddress } from "@/lib/utils"
 import { toPrecision } from "@/lib/numbers"
 import { toSplittedSignature } from "@/lib/signature"
-
-import useHybridPermitSign from "./useHybridPermitSign"
 
 const ABI_PERMIT = parseAbi([
   "function permit(address owner, address spender, uint256 value, uint256 deadline, uint8 v, bytes32 r, bytes32 s) public",
 ])
 export default function DialogSend({ trigger }: { trigger: React.ReactNode }) {
+  const { alchemy } = useAlchemy(1) // Ethereum Mainnet
   const { address: connectedWallet } = useAccount()
   const { data: balance } = useWalletUSDCBalance(connectedWallet)
   const balanceInput = useFormattedInputHandler({ decimals: 6 })
@@ -46,10 +53,15 @@ export default function DialogSend({ trigger }: { trigger: React.ReactNode }) {
   }, [isOpen])
 
   async function handleSend() {
+    const isENSAddress = recipient.endsWith(".eth")
     const SMART_WALLET_ADDRESS = smartWalletClient?.account.address!
     const OWNER = connectedWallet!
+    const RECIPIENT: Address = isENSAddress
+      ? // We fetch the address for the given ENS
+        ((await alchemy.core.resolveName(recipient)) as any) // empty by default
+      : recipient
 
-    if (!isAddress(recipient)) return toast.error("Invalid address")
+    if (!isAddress(RECIPIENT)) return toast.error("Invalid address")
     if (!isBalanceStep) return setIsBalanceStep(true) // Continue to balance step
 
     if (Number(balanceInput.value) <= 0) {
@@ -106,7 +118,7 @@ export default function DialogSend({ trigger }: { trigger: React.ReactNode }) {
             data: encodeFunctionData({
               abi: erc20Abi,
               functionName: "transferFrom",
-              args: [OWNER, recipient, balanceInput.formattedValue],
+              args: [OWNER, RECIPIENT, balanceInput.formattedValue],
             }),
           },
         ],
@@ -132,7 +144,9 @@ export default function DialogSend({ trigger }: { trigger: React.ReactNode }) {
             <FaArrowRightLong />
           </span>
           <span className="text-[80%] font-bold py-0.5 bg-black/3 rounded-lg px-2 border">
-            {beautifyAddress(recipient, 4, "")}
+            {isAddress(recipient)
+              ? beautifyAddress(recipient, 4, "")
+              : recipient}
           </span>
         </nav>
       ) : (
@@ -171,7 +185,8 @@ export default function DialogSend({ trigger }: { trigger: React.ReactNode }) {
           <p>Recipient address</p>
           <div className="border flex bg-black/3 h-14 w-full px-4 rounded-xl mt-1">
             <input
-              onChange={(e) => setRecipient(e.target.value)}
+              value={recipient}
+              onChange={(e) => setRecipient(e.target.value.trim())}
               placeholder="d3portillo.eth"
               className="bg-transparent text-lg font-medium flex-grow h-full w-full outline-none"
             />

@@ -10,14 +10,19 @@ import { Address, erc20Abi, formatUnits } from "viem"
 import { useReadContract } from "wagmi"
 import useSWR from "swr"
 
-const alchemy = new Alchemy({
+const alchemyBase = new Alchemy({
   apiKey: process.env.NEXT_PUBLIC_ALCHEMY_API_KEY,
   network: Network.BASE_MAINNET,
 })
 
-export const useAlchemy = () => {
-  alchemy
-}
+const alchemyEthereum = new Alchemy({
+  apiKey: process.env.NEXT_PUBLIC_ALCHEMY_API_KEY,
+  network: Network.ETH_MAINNET,
+})
+
+export const useAlchemy = (chainId: number) => ({
+  alchemy: chainId === 1 ? alchemyEthereum : alchemyBase,
+})
 
 export const USDC_BASE = "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913" as const
 export const useWalletUSDCBalance = (address?: Address) => {
@@ -45,7 +50,7 @@ export const useWalletUSDCBalance = (address?: Address) => {
 export const useWalletTransactions = (address?: Address) => {
   return useSWR(address ? `sent-${address}` : null, async () => {
     if (!address) return []
-    const res = await alchemy.core.getAssetTransfers({
+    const res = await alchemyBase.core.getAssetTransfers({
       fromAddress: address,
       excludeZeroValue: true,
       withMetadata: true,
