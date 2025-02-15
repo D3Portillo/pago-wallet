@@ -8,13 +8,13 @@
 ## Features
 
 - Connect with EOA Wallets, Smart Wallets and Socials
-- You do need to worry about gas, user only signs for transactions off-chain and we relay the transaction using a Alchemy's paymsters
+- Don't need to worry about gas, user only signs for transactions off-chain and we relay the transaction using a Alchemy's paymsters
 
 ## Want to add
 
-- Back up for wallets
-- Wallet recover from Drive, iCloud
+- Back up for wallets (\*added wallet export) ✅
 - Scan to add user to a walet + it's metadata (custom profile pic, name, etc)
+- Wallet recover from Drive, iCloud
 
 ## The stack
 
