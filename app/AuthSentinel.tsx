@@ -1,7 +1,8 @@
 "use client"
 
 import { Fragment, useEffect, useState } from "react"
-import { usePrivy } from "@privy-io/react-auth"
+import { usePrivy, useWallets } from "@privy-io/react-auth"
+import { useSetActiveWallet } from "@privy-io/wagmi"
 
 import { Button } from "@/components/ui/button"
 import { FaArrowRight } from "react-icons/fa"
@@ -11,13 +12,34 @@ import asset_logo from "@/assets/logo.svg"
 import Image from "next/image"
 
 export default function AuthSentinel() {
+  const { login, ready, authenticated, isModalOpen, user } = usePrivy()
+  const { setActiveWallet } = useSetActiveWallet()
+  const { wallets: userOwnedWallets } = useWallets()
+
+  const USER_LOGIN_ADDY = user?.wallet?.address
   const [showWelcome, setShowWelcome] = useState(false)
-  const { login, ready, authenticated, isModalOpen } = usePrivy()
   const isLoading = !ready
 
   useEffect(() => {
     setShowWelcome(!isModalOpen && !authenticated)
   }, [isModalOpen, authenticated])
+
+  useEffect(() => {
+    const userWallet = userOwnedWallets.find(
+      (wallet) => wallet.address === USER_LOGIN_ADDY
+    )
+
+    if (userWallet && authenticated && ready) {
+      console.debug({ userWallet })
+
+      // Set the active wallet for wagmi's wrapper
+      // Based on user's auth from Privy to avoid mixing up with
+      // Privy's bridged connector for wagmi
+      setTimeout(() => {
+        setActiveWallet(userWallet)
+      }, 50)
+    }
+  }, [USER_LOGIN_ADDY, userOwnedWallets.length, authenticated, ready])
 
   if (isLoading) {
     return (

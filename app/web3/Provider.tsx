@@ -10,6 +10,7 @@ import { SmartWalletsProvider } from "@privy-io/react-auth/smart-wallets"
 
 export const config = createConfig({
   chains: [base],
+  ssr: true,
   transports: {
     [base.id]: http(),
   },
@@ -35,7 +36,7 @@ const privyConfig: PrivyClientConfig = {
     ],
   },
   defaultChain: base,
-  loginMethods: ["wallet", "twitter", "email"],
+  loginMethods: ["google", "twitter", "email", "wallet"],
   embeddedWallets: {
     requireUserPasswordOnCreate: false,
     showWalletUIs: true,

@@ -37,5 +37,5 @@ export function getBlockieURLForAddress(address?: string) {
     return canvas.toDataURL("base64")
   }
 
-  return "/"
+  return "/pf-default.png"
 }

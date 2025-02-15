@@ -15,6 +15,7 @@ import DialogDefault from "@/components/DialogDefault"
 import DropdownSettings from "@/components/DropdownSettings"
 import { Button } from "@/components/ui/button"
 import { toast } from "sonner"
+import { isAddress } from "viem"
 
 export default function TopNavigation() {
   const [open, setIsOpen] = useState(false)
@@ -44,9 +45,11 @@ export default function TopNavigation() {
         open={open}
         onOpenChange={setIsOpen}
         trigger={
-          <button className="bg-black flex items-center gap-2 pl-3 rounded-full">
+          <button className="bg-black outline-none flex items-center gap-2 pl-3 rounded-full">
             <strong className="text-white text-sm font-bold">
-              {beautifyAddress(address, 4, "")}
+              {isAddress(address || "")
+                ? beautifyAddress(address, 4, ".")
+                : "Loading..."}
             </strong>
             <div className="outline-none border-2 border-black rounded-full size-8 overflow-hidden">
               <AddressBox address={address!} />
