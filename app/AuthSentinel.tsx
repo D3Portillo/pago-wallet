@@ -29,7 +29,14 @@ export default function AuthSentinel() {
       (wallet) => wallet.address === USER_LOGIN_ADDY
     )
 
-    if (userWallet && authenticated && ready) {
+    if (
+      userWallet &&
+      // We only set the active wallet if not injected
+      // So user don't get prompted to connect their wallet again
+      userWallet.connectorType !== "injected" &&
+      ready &&
+      authenticated
+    ) {
       console.debug({ userWallet })
 
       // Set the active wallet for wagmi's wrapper

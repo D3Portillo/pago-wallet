@@ -29,7 +29,7 @@ function DropdownSettings({ trigger }: { trigger: React.ReactNode }) {
         className="w-56 [&_*]:text-base"
       >
         <DropdownMenuLabel className="text-black dark:text-white px-3">
-          App Settings
+          Advanced Options
         </DropdownMenuLabel>
 
         <DropdownMenuSeparator />

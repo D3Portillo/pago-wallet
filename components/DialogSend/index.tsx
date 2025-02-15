@@ -4,18 +4,13 @@ import { type SendTransactionModalUIOptions } from "@privy-io/react-auth"
 
 import { useEffect, useState } from "react"
 import { toast } from "sonner"
-import {
-  type Address,
-  encodeFunctionData,
-  erc20Abi,
-  isAddress,
-  parseAbi,
-} from "viem"
+import { encodeFunctionData, erc20Abi, isAddress, parseAbi } from "viem"
 import { useAccount } from "wagmi"
 import { useSmartWallets } from "@privy-io/react-auth/smart-wallets"
 
 import DialogDefault from "@/components/DialogDefault"
 import { Button } from "@/components/ui/button"
+import Input from "@/components/Input"
 
 import { FaArrowRightLong } from "react-icons/fa6"
 
@@ -26,6 +21,9 @@ import useHybridPermitSign from "./useHybridPermitSign"
 import { beautifyAddress } from "@/lib/utils"
 import { toPrecision } from "@/lib/numbers"
 import { toSplittedSignature } from "@/lib/signature"
+import { MdContacts } from "react-icons/md"
+
+import DialogContactSelector from "./DialogContactSelector"
 
 const ABI_PERMIT = parseAbi([
   "function permit(address owner, address spender, uint256 value, uint256 deadline, uint8 v, bytes32 r, bytes32 s) public",
@@ -56,9 +54,9 @@ export default function DialogSend({ trigger }: { trigger: React.ReactNode }) {
     const isENSAddress = recipient.endsWith(".eth")
     const SMART_WALLET_ADDRESS = smartWalletClient?.account.address!
     const OWNER = connectedWallet!
-    const RECIPIENT: Address = isENSAddress
+    const RECIPIENT = isENSAddress
       ? // We fetch the address for the given ENS
-        ((await alchemy.core.resolveName(recipient)) as any) // empty by default
+        (await alchemy.core.resolveName(recipient)) || ""
       : recipient
 
     if (!isAddress(RECIPIENT)) return toast.error("Invalid address")
@@ -154,22 +152,25 @@ export default function DialogSend({ trigger }: { trigger: React.ReactNode }) {
       )}
 
       {isBalanceStep ? (
-        <label className="mt-6 block w-full">
+        <label className="mt-5 block w-full">
           <nav className="flex items-center justify-between gap-4">
             <p>Balance</p>
           </nav>
 
-          <div className="border flex items-center bg-black/3 h-14 w-full px-4 rounded-xl mt-1">
-            <input
-              value={balanceInput.value}
-              onChange={balanceInput.onChangeHandler}
-              placeholder="0.00"
-              className="bg-transparent text-lg font-medium flex-grow h-full w-full outline-none"
-            />
-            <button onClick={handleMax} className="text-lg font-medium h-full">
-              MAX
-            </button>
-          </div>
+          <Input
+            value={balanceInput.value}
+            onChange={balanceInput.onChangeHandler}
+            placeholder="0.00"
+            className="mt-1"
+            endEnhancer={
+              <button
+                onClick={handleMax}
+                className="text-lg font-medium h-full"
+              >
+                MAX
+              </button>
+            }
+          />
 
           <nav className="flex items-center justify-center mt-2 gap-4">
             <p>
@@ -181,16 +182,25 @@ export default function DialogSend({ trigger }: { trigger: React.ReactNode }) {
           </nav>
         </label>
       ) : (
-        <label className="mt-6 block w-full">
+        <label className="mt-5 block group w-full">
           <p>Recipient address</p>
-          <div className="border flex bg-black/3 h-14 w-full px-4 rounded-xl mt-1">
-            <input
-              value={recipient}
-              onChange={(e) => setRecipient(e.target.value.trim())}
-              placeholder="d3portillo.eth"
-              className="bg-transparent text-lg font-medium flex-grow h-full w-full outline-none"
-            />
-          </div>
+          <Input
+            value={recipient}
+            onChange={(e) => setRecipient(e.currentTarget.value.trim())}
+            placeholder="d3portillo.eth"
+            className="mt-1 pr-0"
+            endEnhancer={
+              <DialogContactSelector
+                showActiveAddress={recipient as any}
+                onSelect={(contact) => setRecipient(contact.address)}
+                trigger={
+                  <button className="size-12 opacity-40 group-focus-within:opacity-70 grid place-items-center">
+                    <MdContacts className="text-xl" />
+                  </button>
+                }
+              />
+            }
+          />
         </label>
       )}
       <Button
